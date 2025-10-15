@@ -16,243 +16,112 @@ const getApiBaseUrl = () => {
 
 class WebsocketClientApp {
   private rtviClient: RTVIClient | null = null;
-  private connectBtn: HTMLButtonElement | null = null;
-  private listenBtn: HTMLButtonElement | null = null;
-  private stopBtn: HTMLButtonElement | null = null;
-  private statusSpan: HTMLElement | null = null;
-  private statusIndicator: HTMLElement | null = null;
-  private debugLog: HTMLElement | null = null;
   private audioContext: AudioContext | null = null;
-  private connectionLight: HTMLElement | null = null;
-  private micLight: HTMLElement | null = null;
-  private speakerLight: HTMLElement | null = null;
-  private voiceStatus: HTMLElement | null = null;
-  private listeningIndicator: HTMLElement | null = null;
-  private speakingIndicator: HTMLElement | null = null;
-  private dotsContainer: HTMLElement | null = null;
-  private tabs: NodeListOf<HTMLButtonElement> | null = null;
-  private configPanels: NodeListOf<HTMLElement> | null = null;
   private activeTab: string = "tts-llm-stt";
-  private activePipeline: HTMLElement | null = null;
+  
+  // Chatbot UI elements
+  private chatbotToggle: HTMLButtonElement | null = null;
+  private chatbotWidget: HTMLElement | null = null;
+  private chatbotClose: HTMLButtonElement | null = null;
+  private connectBtnChat: HTMLButtonElement | null = null;
+  private micButton: HTMLButtonElement | null = null;
+  private statusDot: HTMLElement | null = null;
+  private connectionStatus: HTMLElement | null = null;
+  private statusText: HTMLElement | null = null;
+  private apiKeyInput: HTMLInputElement | null = null;
+  private botTypeRadios: NodeListOf<HTMLInputElement> | null = null;
 
   constructor() {
     this.setupDOMElements();
     this.setupEventListeners();
+    this.loadDefaultConfiguration();
   }
 
   private setupDOMElements(): void {
-    this.connectBtn = document.getElementById(
-      "connect-btn"
-    ) as HTMLButtonElement;
-    this.listenBtn = document.getElementById(
-      "listen-btn"
-    ) as HTMLButtonElement;
-    this.stopBtn = document.getElementById("stop-btn") as HTMLButtonElement;
-    this.statusSpan = document.getElementById("connection-status");
-    this.statusIndicator = document.getElementById("status-indicator");
-    this.debugLog = document.getElementById("debug-log");
-    this.connectionLight = document.getElementById("connection-light");
-    this.micLight = document.getElementById("mic-light");
-    this.speakerLight = document.getElementById("speaker-light");
-    this.voiceStatus = document.querySelector(".voice-status");
-    this.listeningIndicator = document.getElementById("listening-indicator");
-    this.speakingIndicator = document.getElementById("speaking-indicator");
-    this.dotsContainer = document.getElementById("dots-container");
-    this.tabs = document.querySelectorAll(".tab-btn");
-    this.configPanels = document.querySelectorAll(".config-panel");
-    this.activePipeline = document.querySelector(".active-pipeline");
+    // Chatbot UI elements
+    this.chatbotToggle = document.getElementById("chatbot-toggle") as HTMLButtonElement;
+    this.chatbotWidget = document.getElementById("chatbot-widget") as HTMLElement;
+    this.chatbotClose = document.getElementById("chatbot-close") as HTMLButtonElement;
+    this.connectBtnChat = document.getElementById("connect-btn-chat") as HTMLButtonElement;
+    this.micButton = document.getElementById("mic-button") as HTMLButtonElement;
+    this.statusDot = document.getElementById("status-dot") as HTMLElement;
+    this.connectionStatus = document.getElementById("connection-status") as HTMLElement;
+    this.statusText = document.getElementById("status-text") as HTMLElement;
+    this.apiKeyInput = document.getElementById("api-key-input") as HTMLInputElement;
+    this.botTypeRadios = document.querySelectorAll('input[name="bot-type"]');
   }
 
   private setupEventListeners(): void {
-    this.connectBtn?.addEventListener("click", () => this.toggleConnection());
-    this.listenBtn?.addEventListener("click", () => this.startListening());
-    this.stopBtn?.addEventListener("click", () => this.stopListening());
-    this.tabs?.forEach((tab) => {
-      tab.addEventListener("click", () => this.switchTab(tab));
-    });
-
-    const paceSlider = document.getElementById("tts-pace-slider") as HTMLInputElement;
-    const paceValue = document.getElementById("tts-pace-value");
-    if (paceSlider && paceValue) {
-      paceSlider.addEventListener("input", () => {
-        paceValue.textContent = parseFloat(paceSlider.value).toFixed(2);
-      });
-    }
-
-    const livePaceSlider = document.getElementById("live-tts-pace-slider") as HTMLInputElement;
-    const livePaceValue = document.getElementById("live-tts-pace-value");
-    if (livePaceSlider && livePaceValue) {
-      livePaceSlider.addEventListener("input", () => {
-        livePaceValue.textContent = parseFloat(livePaceSlider.value).toFixed(2);
-      });
-    }
-
-    const shortPauseBtn = document.getElementById("pause-short-btn");
-    const longPauseBtn = document.getElementById("pause-long-btn");
-    const systemInstructionsTextarea = document.getElementById(
-      "tts-llm-stt-system-instructions-textarea"
-    ) as HTMLTextAreaElement;
-
-    shortPauseBtn?.addEventListener("click", () => {
-      systemInstructionsTextarea.value += " [pause short]";
-    });
-
-    longPauseBtn?.addEventListener("click", () => {
-      systemInstructionsTextarea.value += " [pause long]";
-    });
-
-    const geminiModelSelect = document.getElementById("gemini-model-select") as HTMLSelectElement;
-    const ttsWarning = document.getElementById("tts-warning") as HTMLDivElement;
-    const voiceWarning = document.getElementById("voice-warning") as HTMLDivElement;
-    const geminiVoiceSelect = document.getElementById("gemini-voice-select") as HTMLSelectElement;
-    const ttsToggle = document.getElementById("tts-toggle") as HTMLInputElement;
-
-    const handleModelChange = () => {
-      const selectedModel = geminiModelSelect.value;
-      const selectedVoice = geminiVoiceSelect.value;
-
-      if (selectedModel.includes("native-audio")) {
-        if (ttsToggle.checked) {
-          ttsWarning.style.display = "block";
-        } else {
-          ttsWarning.style.display = "none";
+    // Chatbot toggle
+    this.chatbotToggle?.addEventListener("click", () => this.toggleChatbot());
+    this.chatbotClose?.addEventListener("click", () => this.closeChatbot());
+    
+    // Connection button
+    this.connectBtnChat?.addEventListener("click", () => this.toggleConnection());
+    
+    // Microphone button
+    this.micButton?.addEventListener("click", () => this.toggleMicrophone());
+    
+    // Bot type selection
+    this.botTypeRadios?.forEach((radio) => {
+      radio.addEventListener("change", (e) => {
+        const target = e.target as HTMLInputElement;
+        if (target.checked) {
+          this.activeTab = target.value;
+          this.log(`Selected bot type: ${this.activeTab}`);
         }
-        if (selectedVoice.startsWith("Custom")) {
-          voiceWarning.style.display = "block";
-        } else {
-          voiceWarning.style.display = "none";
-        }
-      } else {
-        ttsWarning.style.display = "none";
-        voiceWarning.style.display = "none";
-      }
-    };
-
-    geminiModelSelect?.addEventListener("change", handleModelChange);
-    geminiVoiceSelect?.addEventListener("change", handleModelChange);
-    ttsToggle?.addEventListener("change", handleModelChange);
+      });
+    });
   }
 
-  public async loadSystemPrompt(): Promise<void> {
+  private toggleChatbot(): void {
+    this.chatbotWidget?.classList.toggle("active");
+    this.chatbotToggle?.classList.toggle("active");
+    
+    if (this.chatbotWidget?.classList.contains("active")) {
+      this.log("Chatbot opened");
+    } else {
+      this.log("Chatbot closed");
+    }
+  }
+
+  private closeChatbot(): void {
+    this.chatbotWidget?.classList.remove("active");
+    this.chatbotToggle?.classList.remove("active");
+    this.log("Chatbot closed");
+  }
+
+  private async loadDefaultConfiguration(): Promise<void> {
     try {
       const response = await fetch(`${getApiBaseUrl()}/system-prompt`);
       const data = await response.json();
-      const geminiSystemInstructionsTextarea = document.getElementById(
-        "system-instructions-textarea"
-      ) as HTMLTextAreaElement;
-      if (geminiSystemInstructionsTextarea) {
-        geminiSystemInstructionsTextarea.value = data.system_prompt;
-      }
-
-      const ttsLlmSttSystemInstructionsTextarea = document.getElementById(
-        "tts-llm-stt-system-instructions-textarea"
-      ) as HTMLTextAreaElement;
-      if (ttsLlmSttSystemInstructionsTextarea) {
-        ttsLlmSttSystemInstructionsTextarea.value = data.system_prompt;
-      }
+      this.log("Default configuration loaded");
+      // Store system prompt for later use
+      (window as any).systemPrompt = data.system_prompt;
     } catch (error) {
-      this.log(`Error loading system prompt: ${error}`, "error");
-    }
-  }
-
-  private switchTab(tab: HTMLButtonElement): void {
-    const tabId = tab.dataset.tab;
-    if (!tabId) return;
-
-    this.activeTab = tabId;
-
-    this.tabs?.forEach((t) => t.classList.remove("active"));
-    tab.classList.add("active");
-
-    this.configPanels?.forEach((panel) => {
-      if (panel.id === `${tabId}-panel`) {
-        panel.classList.add("active");
-      } else {
-        panel.classList.remove("active");
-      }
-    });
-
-    if (this.activePipeline) {
-      if (tabId === "tts-llm-stt") {
-        this.activePipeline.textContent = "Active: TTS-LLM-STT Pipeline";
-      } else if (tabId === "gemini-live") {
-        this.activePipeline.textContent = "Active: Gemini Live Pipeline";
-      }
+      this.log(`Error loading configuration: ${error}`, "error");
     }
   }
 
   private log(message: string, level: LogLevel = "info"): void {
-    if (!this.debugLog) return;
-
-    const entry = document.createElement("div");
-    entry.classList.add("log-entry");
-
-    const time = new Date().toLocaleTimeString();
-    const timeEl = document.createElement("span");
-    timeEl.classList.add("log-time");
-    timeEl.textContent = time;
-
-    const levelEl = document.createElement("span");
-    levelEl.classList.add("log-level", level);
-    levelEl.textContent = level;
-
-    const messageEl = document.createElement("span");
-    messageEl.textContent = message;
-
-    entry.appendChild(timeEl);
-    entry.appendChild(levelEl);
-    entry.appendChild(messageEl);
-
-    this.debugLog.appendChild(entry);
-    this.debugLog.scrollTop = this.debugLog.scrollHeight;
     console.log(`[${level.toUpperCase()}] ${message}`);
   }
 
-  private updateStatus(status: string): void {
-    if (this.statusSpan) {
-      this.statusSpan.textContent = status;
-    }
-    if (this.statusIndicator) {
-      this.statusIndicator.className = status.toLowerCase();
-    }
-    if (this.connectionLight) {
-      this.connectionLight.textContent =
-        status === "Connected" ? "Active" : "Inactive";
-      this.connectionLight.className = `light ${
-        status === "Connected" ? "active" : "inactive"
-      }`;
-    }
-    this.log(`Status: ${status}`);
-  }
-
-  private updateMicStatus(status: "idle" | "active"): void {
-    if (this.micLight) {
-      this.micLight.textContent = status === "active" ? "Active" : "Idle";
-      this.micLight.className = `light ${status}`;
-    }
-    if (this.listeningIndicator) {
-      this.listeningIndicator.classList.toggle("active", status === "active");
-    }
-    if (this.dotsContainer) {
-      this.dotsContainer.classList.toggle("active", status === "active");
-    }
-    if (this.voiceStatus) {
-      this.voiceStatus.textContent =
-        status === "active" ? "Listening..." : "Click to start conversation";
+  private updateConnectionStatus(status: "connected" | "connecting" | "disconnected"): void {
+    if (this.statusDot) {
+      if (status === "connected") {
+        this.statusDot.classList.add("connected");
+        if (this.connectionStatus) this.connectionStatus.textContent = "Connected";
+      } else {
+        this.statusDot.classList.remove("connected");
+        if (this.connectionStatus) this.connectionStatus.textContent = status === "connecting" ? "Connecting..." : "Not Connected";
+      }
     }
   }
 
-  private updateSpeakerStatus(status: "silent" | "active"): void {
-    if (this.speakerLight) {
-      this.speakerLight.textContent = status === "active" ? "Active" : "Silent";
-      this.speakerLight.className = `light ${status}`;
-    }
-    if (this.speakingIndicator) {
-      this.speakingIndicator.classList.toggle("active", status === "active");
-    }
-    if (this.dotsContainer) {
-      // Also show dots when speaking
-      this.dotsContainer.classList.toggle("active", status === "active");
+  private updateStatusText(text: string): void {
+    if (this.statusText) {
+      this.statusText.textContent = text;
     }
   }
 
@@ -264,33 +133,32 @@ class WebsocketClientApp {
     }
   }
 
-  private startListening(): void {
-    if (this.rtviClient) {
-      const tracks = this.rtviClient.tracks();
-      if (tracks.local?.audio) {
-        tracks.local.audio.enabled = true;
-        this.log("Microphone unmuted");
+  private toggleMicrophone(): void {
+    if (!this.rtviClient) {
+      this.log("Please connect first", "warning");
+      return;
+    }
+
+    const tracks = this.rtviClient.tracks();
+    if (tracks.local?.audio) {
+      const isEnabled = tracks.local.audio.enabled;
+      tracks.local.audio.enabled = !isEnabled;
+      
+      if (this.micButton) {
+        if (!isEnabled) {
+          this.micButton.classList.add("active");
+          this.updateStatusText("Listening...");
+        } else {
+          this.micButton.classList.remove("active");
+          this.updateStatusText("Microphone muted");
+        }
       }
-      this.updateMicStatus("active");
-      this.listenBtn!.disabled = true;
-      this.stopBtn!.disabled = false;
+      
+      this.log(isEnabled ? "Microphone muted" : "Microphone unmuted");
     }
   }
 
-  private stopListening(): void {
-    if (this.rtviClient) {
-      const tracks = this.rtviClient.tracks();
-      if (tracks.local?.audio) {
-        tracks.local.audio.enabled = false;
-        this.log("Microphone muted");
-      }
-      this.updateMicStatus("idle");
-      this.listenBtn!.disabled = false;
-      this.stopBtn!.disabled = true;
-    }
-  }
-
-  setupMediaTracks() {
+  private setupMediaTracks(): void {
     if (!this.rtviClient) return;
     const tracks = this.rtviClient.tracks();
     if (tracks.bot?.audio) {
@@ -298,22 +166,19 @@ class WebsocketClientApp {
     }
   }
 
-  setupTrackListeners() {
+  private setupTrackListeners(): void {
     if (!this.rtviClient) return;
 
     this.rtviClient.on(RTVIEvent.TrackStarted, (track, participant) => {
       if (!participant?.local && track.kind === "audio") {
         this.setupAudioTrack(track);
-        this.updateSpeakerStatus("active");
+        this.updateStatusText("Bot is speaking...");
       }
     });
 
     this.rtviClient.on(RTVIEvent.TrackStopped, (track, participant) => {
-      this.log(
-        `Track stopped: ${track.kind} from ${participant?.name || "unknown"}`
-      );
       if (!participant?.local && track.kind === "audio") {
-        this.updateSpeakerStatus("silent");
+        this.updateStatusText("Ready");
       }
     });
   }
@@ -332,78 +197,39 @@ class WebsocketClientApp {
     try {
       this.audioContext = new AudioContext();
       this.audioContext.resume();
-      this.updateStatus("Connecting");
+      this.updateConnectionStatus("connecting");
 
       const transport = new WebSocketTransport();
 
-      const apiKeyInput = document.getElementById("api-key-input") as HTMLInputElement;
-      const apiKey = apiKeyInput.value;
+      const apiKey = this.apiKeyInput?.value;
 
       if (!apiKey) {
         this.log("API key is required", "error");
-        this.updateStatus("Error");
+        this.updateConnectionStatus("disconnected");
+        this.updateStatusText("Please enter API key");
         return;
       }
 
       let connectUrl = `/connect?bot_type=${this.activeTab}&api_key=${apiKey}`;
-      let systemInstructions = "";
+      let systemInstructions = (window as any).systemPrompt || "";
 
+      // Build connection URL based on active tab with default values
       if (this.activeTab === "tts-llm-stt") {
-        const ttsVoiceSelect = document.getElementById(
-          "tts-voice-select"
-        ) as HTMLSelectElement;
-        const llmModelSelect = document.getElementById(
-          "llm-model-select"
-        ) as HTMLSelectElement;
-        const sttModelSelect = document.getElementById(
-          "stt-model-select"
-        ) as HTMLSelectElement;
-        const sttLanguageSelect = document.getElementById(
-          "stt-language-select"
-        ) as HTMLSelectElement;
-        const systemInstructionsTextarea = document.getElementById(
-          "tts-llm-stt-system-instructions-textarea"
-        ) as HTMLTextAreaElement;
-        const paceSlider = document.getElementById("tts-pace-slider") as HTMLInputElement;
-
-        connectUrl += `&tts_voice=${ttsVoiceSelect.value}`;
-        connectUrl += `&tts_pace=${paceSlider.value}`;
-        connectUrl += `&llm_model=${llmModelSelect.value}`;
-        connectUrl += `&stt_model=${sttModelSelect.value}`;
-        connectUrl += `&stt_language=${sttLanguageSelect.value}`;
-        systemInstructions = systemInstructionsTextarea.value;
+        connectUrl += `&tts_voice=en-US-Chirp3-HD-Aoede`;
+        connectUrl += `&tts_pace=1.0`;
+        connectUrl += `&llm_model=gemini-2.5-flash-lite-preview-06-17`;
+        connectUrl += `&stt_model=chirp_3`;
+        connectUrl += `&stt_language=en-IN`;
       } else {
-        const geminiModelSelect = document.getElementById(
-          "gemini-model-select"
-        ) as HTMLSelectElement;
-        const geminiVoiceSelect = document.getElementById(
-          "gemini-voice-select"
-        ) as HTMLSelectElement;
-        const geminiLanguageSelect = document.getElementById(
-          "gemini-language-select"
-        ) as HTMLSelectElement;
-        const geminiSystemInstructionsTextarea = document.getElementById(
-          "system-instructions-textarea"
-        ) as HTMLTextAreaElement;
-        const ttsToggle = document.getElementById(
-          "tts-toggle"
-        ) as HTMLInputElement;
-        const livePaceSlider = document.getElementById(
-          "live-tts-pace-slider"
-        ) as HTMLInputElement;
-
-        connectUrl += `&model=${geminiModelSelect.value}`;
-        connectUrl += `&voice=${geminiVoiceSelect.value}`;
-        connectUrl += `&language=${geminiLanguageSelect.value}`;
-        connectUrl += `&tts=${ttsToggle.checked}`;
-        connectUrl += `&tts_pace=${livePaceSlider.value}`;
-        systemInstructions = geminiSystemInstructionsTextarea.value;
+        connectUrl += `&model=gemini-live-2.5-flash-preview`;
+        connectUrl += `&voice=Custom-Female`;
+        connectUrl += `&language=hi-IN`;
+        connectUrl += `&tts=true`;
+        connectUrl += `&tts_pace=1.0`;
       }
 
       if (systemInstructions) {
-        connectUrl += `&system_instruction=${encodeURIComponent(
-          systemInstructions
-        )}`;
+        connectUrl += `&system_instruction=${encodeURIComponent(systemInstructions)}`;
       }
 
       const RTVIConfig: RTVIClientOptions = {
@@ -418,16 +244,25 @@ class WebsocketClientApp {
         enableCam: false,
         callbacks: {
           onConnected: () => {
-            this.updateStatus("Connected");
-            if (this.connectBtn) this.connectBtn.textContent = "Disconnect";
-            if (this.listenBtn) this.listenBtn.disabled = false;
+            this.updateConnectionStatus("connected");
+            this.updateStatusText("Connected! Click microphone to start");
+            if (this.connectBtnChat) {
+              this.connectBtnChat.innerHTML = '<i class="fas fa-plug"></i> Disconnect';
+            }
+            if (this.micButton) {
+              this.micButton.disabled = false;
+            }
           },
           onDisconnected: () => {
-            this.updateStatus("Disconnected");
-            if (this.connectBtn) this.connectBtn.textContent = "Connect";
-            if (this.listenBtn) this.listenBtn.disabled = true;
-            if (this.stopBtn) this.stopBtn.disabled = true;
-            this.updateMicStatus("idle");
+            this.updateConnectionStatus("disconnected");
+            this.updateStatusText("Disconnected");
+            if (this.connectBtnChat) {
+              this.connectBtnChat.innerHTML = '<i class="fas fa-plug"></i> Connect';
+            }
+            if (this.micButton) {
+              this.micButton.disabled = true;
+              this.micButton.classList.remove("active");
+            }
             this.log("Client disconnected");
           },
           onBotReady: (data) => {
@@ -435,7 +270,6 @@ class WebsocketClientApp {
             this.setupMediaTracks();
           },
           onGenericMessage: (message: any) => {
-            this.log(`Generic message: ${JSON.stringify(message)}`);
             if (message.type === "transcription") {
               const { participant, text } = message;
               this.log(`[${participant}] ${text}`, "info");
@@ -463,7 +297,8 @@ class WebsocketClientApp {
       await this.rtviClient.connect();
     } catch (error) {
       this.log(`Error connecting: ${(error as Error).message}`, "error");
-      this.updateStatus("Error");
+      this.updateConnectionStatus("disconnected");
+      this.updateStatusText("Connection failed");
       if (this.rtviClient) {
         try {
           await this.rtviClient.disconnect();
@@ -499,5 +334,4 @@ declare global {
 window.addEventListener("DOMContentLoaded", () => {
   window.WebsocketClientApp = WebsocketClientApp;
   const app = new WebsocketClientApp();
-  app.loadSystemPrompt();
 });
