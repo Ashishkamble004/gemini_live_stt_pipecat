@@ -2,6 +2,7 @@
 /node_modules
 /.pnp
 .pnp.js
+/client/node_modules/.vite
 
 # Testing
 /coverage
@@ -9,6 +10,7 @@
 # Production
 /build
 /dist
+/client/dist
 .DS_Store
 
 # Misc
@@ -26,5 +28,8 @@ yarn-error.log*
 /server/venv/
 __pycache__/
 *.pyc
+*.js.map
+*.js
+!vite.config.js
 server/voice_cloning_key_f.txt
 server/voice_cloning_key_m.txt
