@@ -1,12 +1,15 @@
 :root {
-  --primary-color: #4A7CB8;
-  --secondary-color: #2E5A8E;
-  --background-color: #E8EEF4;
-  --text-color: #333333;
-  --border-color: #D1D9E6;
+  /* SBI Bank color scheme - professional banking colors */
+  --primary-color: #1C4A8C; /* SBI Blue */
+  --secondary-color: #0F2E5C; /* Darker Blue */
+  --accent-color: #FF6F00; /* Orange accent */
+  --background-color: #F5F7FA;
+  --text-color: #2C3E50;
+  --border-color: #D1DBE5;
   --success-color: #28A745;
   --error-color: #DC3545;
   --font-family: "Inter", sans-serif;
+  --card-shadow: 0 2px 8px rgba(28, 74, 140, 0.08);
 }
 
 * {
@@ -24,121 +27,241 @@ body {
   flex-direction: column;
 }
 
-/* Header */
+/* Header - Modern Bank Design */
 .header {
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
   color: white;
-  padding: 25px 40px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px 0;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .header-content {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
+  padding: 0 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .logo-section {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  gap: 15px;
 }
 
-/* Logo Image - Hidden by default, shown when logo.png is added */
-.logo-image {
-  max-height: 60px;
-  max-width: 250px;
-  object-fit: contain;
-  display: none; /* Will be visible when you add logo.png */
+/* Logo Placeholder */
+.logo-placeholder {
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
 
-/* Text Logo - Visible by default */
-.logo-text {
-  display: block;
-}
-
-.logo-text h1 {
-  font-size: 32px;
-  font-weight: 700;
-  margin: 0;
-  color: white;
-}
-
-.logo-text p {
-  font-size: 14px;
-  margin: 5px 0 0 0;
-  color: rgba(255, 255, 255, 0.9);
-}
-
-/* Main Content */
-.main-content {
-  flex: 1;
+.logo-box {
+  width: 60px;
+  height: 60px;
+  background: white;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.logo-text-placeholder {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--primary-color);
+  letter-spacing: 1px;
+}
+
+/* Bank Logo Image (when using actual logo) */
+.bank-logo {
+  max-height: 60px;
+  max-width: 180px;
+  object-fit: contain;
+}
+
+/* Bank Info */
+.bank-info h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+  color: white;
+  letter-spacing: -0.5px;
+}
+
+.bank-info p {
+  font-size: 13px;
+  margin: 2px 0 0 0;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 400;
+}
+
+/* Header Navigation */
+.header-nav {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+}
+
+.nav-link {
+  color: white;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.nav-link:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background: var(--accent-color);
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+  width: 80%;
+}
+
+/* Main Content - Banking Theme */
+.main-content {
+  flex: 1;
+  background: linear-gradient(180deg, #F5F7FA 0%, #FFFFFF 100%);
   padding: 60px 20px;
 }
 
 .welcome-section {
-  max-width: 800px;
+  max-width: 1200px;
+  margin: 0 auto;
   text-align: center;
 }
 
 .welcome-section h2 {
-  font-size: 36px;
+  font-size: 42px;
   color: var(--primary-color);
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   font-weight: 700;
+  letter-spacing: -1px;
 }
 
-.welcome-section p {
+.tagline {
+  font-size: 20px;
+  color: var(--accent-color);
+  font-weight: 600;
+  margin-bottom: 25px;
+}
+
+.description {
   font-size: 18px;
   color: var(--text-color);
-  line-height: 1.6;
+  line-height: 1.7;
+  margin-bottom: 50px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Features Grid */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  margin: 50px auto;
+  max-width: 1000px;
+}
+
+.feature-card {
+  background: white;
+  padding: 35px 25px;
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  transition: all 0.3s ease;
+  border: 1px solid var(--border-color);
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(28, 74, 140, 0.15);
+  border-color: var(--primary-color);
+}
+
+.feature-card i {
+  font-size: 48px;
+  color: var(--primary-color);
   margin-bottom: 20px;
+}
+
+.feature-card h3 {
+  font-size: 20px;
+  color: var(--text-color);
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.feature-card p {
+  font-size: 15px;
+  color: #666;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* CTA Section */
+.cta-section {
+  margin-top: 50px;
 }
 
 .info-text {
-  margin-top: 30px;
-  color: #666;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 30px;
+  background: white;
+  border-radius: 50px;
+  box-shadow: var(--card-shadow);
+  color: var(--text-color);
   font-size: 16px;
+  font-weight: 500;
+  border: 2px solid var(--border-color);
 }
 
 .info-text i {
-  margin-right: 8px;
   color: var(--primary-color);
+  font-size: 20px;
 }
 
-/* Footer */
-.footer {
-  background: white;
-  padding: 20px;
-  text-align: center;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
-  font-size: 14px;
-  color: #666;
-}
-
-.footer .heart {
-  color: #DC3545;
-}
-
-/* Chatbot Toggle Button */
+/* Banking Assistant Toggle Button */
 .chatbot-toggle {
   position: fixed;
   bottom: 30px;
   right: 30px;
-  width: 60px;
-  height: 60px;
+  width: 65px;
+  height: 65px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
   color: white;
   border: none;
   cursor: pointer;
-  box-shadow: 0 4px 20px rgba(74, 124, 184, 0.4);
+  box-shadow: 0 4px 20px rgba(28, 74, 140, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
+  font-size: 26px;
   transition: all 0.3s ease;
   z-index: 1000;
   animation: pulse-glow 2s infinite;
@@ -146,37 +269,37 @@ body {
 
 @keyframes pulse-glow {
   0%, 100% {
-    box-shadow: 0 4px 20px rgba(74, 124, 184, 0.4);
+    box-shadow: 0 4px 20px rgba(28, 74, 140, 0.4);
   }
   50% {
-    box-shadow: 0 4px 30px rgba(74, 124, 184, 0.7);
+    box-shadow: 0 4px 30px rgba(28, 74, 140, 0.7);
   }
 }
 
 .chatbot-toggle:hover {
   transform: scale(1.1);
-  box-shadow: 0 6px 25px rgba(74, 124, 184, 0.6);
+  box-shadow: 0 6px 25px rgba(28, 74, 140, 0.6);
 }
 
 .chatbot-toggle.active {
   background: var(--error-color);
 }
 
-/* Chatbot Widget */
+/* Chatbot Widget - Banking Theme */
 .chatbot-widget {
   position: fixed;
-  bottom: 100px;
+  bottom: 110px;
   right: 30px;
-  width: 400px;
-  max-height: 650px;
+  width: 420px;
+  max-height: 680px;
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  border-radius: 16px;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.25);
   display: none;
   flex-direction: column;
   z-index: 999;
   overflow: hidden;
-  border: 2px solid var(--primary-color);
+  border: 1px solid var(--border-color);
 }
 
 .chatbot-widget.active {
@@ -186,7 +309,7 @@ body {
 .chatbot-header {
   background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
   color: white;
-  padding: 18px 20px;
+  padding: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -195,17 +318,24 @@ body {
 .chatbot-header-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 15px;
 }
 
 .chatbot-header-left i {
-  font-size: 24px;
+  font-size: 32px;
 }
 
 .chatbot-header h3 {
   margin: 0;
-  font-size: 18px;
+  font-size: 19px;
   font-weight: 600;
+}
+
+.assistant-subtitle {
+  font-size: 13px;
+  margin: 3px 0 0 0;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 400;
 }
 
 .chatbot-close {
@@ -474,6 +604,53 @@ body {
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  .header-content {
+    padding: 0 20px;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .header-nav {
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .nav-link {
+    font-size: 13px;
+    padding: 6px 12px;
+  }
+
+  .logo-box {
+    width: 50px;
+    height: 50px;
+  }
+
+  .bank-info h1 {
+    font-size: 22px;
+  }
+
+  .bank-info p {
+    font-size: 11px;
+  }
+
+  .welcome-section h2 {
+    font-size: 32px;
+  }
+
+  .tagline {
+    font-size: 18px;
+  }
+
+  .description {
+    font-size: 16px;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
   .chatbot-widget {
     width: calc(100vw - 40px);
     right: 20px;
@@ -484,13 +661,7 @@ body {
   .chatbot-toggle {
     right: 20px;
     bottom: 20px;
-  }
-
-  .welcome-section h2 {
-    font-size: 28px;
-  }
-
-  .welcome-section p {
-    font-size: 16px;
+    width: 60px;
+    height: 60px;
   }
 }
