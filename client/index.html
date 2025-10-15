@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AI Voice Assistant - Powered by Google Gemini</title>
+    <title>SBI Bank - Digital Banking Assistant</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -20,53 +20,87 @@
     <!-- Header -->
     <header class="header">
       <div class="header-content">
-        <!-- Logo Section - You can replace this with an img tag for your logo.png -->
+        <!-- Logo Section -->
         <div class="logo-section">
-          <!-- Option 1: Using text logo (current) -->
-          <div class="logo-text" id="text-logo">
-            <h1>AI Voice Assistant</h1>
-            <p>Powered by Google's AI - Gemini</p>
+          <!-- Logo Placeholder - Add your logo image to /client/public/logo.png -->
+          <div class="logo-placeholder">
+            <div class="logo-box">
+              <span class="logo-text-placeholder">LOGO</span>
+            </div>
+            <div class="bank-info">
+              <h1>SBI Bank</h1>
+              <p>State Bank of India</p>
+            </div>
           </div>
           
-          <!-- Option 2: Using image logo (uncomment and add your logo.png to /client/public/ folder) -->
+          <!-- To use your own logo image, replace the logo-placeholder div above with: -->
           <!-- 
-          <img src="/logo.png" alt="Logo" class="logo-image" id="logo-image" />
+          <img src="/logo.png" alt="SBI Bank Logo" class="bank-logo" />
+          <div class="bank-info">
+            <h1>SBI Bank</h1>
+            <p>State Bank of India</p>
+          </div>
           -->
         </div>
+        
+        <!-- Navigation -->
+        <nav class="header-nav">
+          <a href="#" class="nav-link">Personal Banking</a>
+          <a href="#" class="nav-link">Corporate Banking</a>
+          <a href="#" class="nav-link">Digital Services</a>
+        </nav>
       </div>
     </header>
 
     <!-- Main Content -->
     <main class="main-content">
       <div class="welcome-section">
-        <h2>Welcome to AI Voice Assistant</h2>
-        <p>
-          Experience real-time voice conversations powered by Google's advanced AI technology. 
-          Click the chatbot icon in the bottom-right corner to get started with our intelligent assistant.
+        <h2>Welcome to SBI Bank Digital Banking</h2>
+        <p class="tagline">Your Trusted Banking Partner Since 1955</p>
+        <p class="description">
+          Experience the future of banking with our AI-powered digital assistant. 
+          Get instant help with your banking needs, 24/7 support, and personalized financial guidance.
         </p>
-        <p class="info-text">
-          <i class="fas fa-info-circle"></i> Choose between STT-LLM-TTS or Gemini Live for your conversation experience.
-        </p>
+        
+        <div class="features-grid">
+          <div class="feature-card">
+            <i class="fas fa-shield-alt"></i>
+            <h3>Secure Banking</h3>
+            <p>Bank-grade security for all your transactions</p>
+          </div>
+          <div class="feature-card">
+            <i class="fas fa-clock"></i>
+            <h3>24/7 Support</h3>
+            <p>Round-the-clock assistance via AI assistant</p>
+          </div>
+          <div class="feature-card">
+            <i class="fas fa-mobile-alt"></i>
+            <h3>Digital First</h3>
+            <p>Modern banking at your fingertips</p>
+          </div>
+        </div>
+        
+        <div class="cta-section">
+          <p class="info-text">
+            <i class="fas fa-info-circle"></i> Click the assistant icon in the bottom-right corner to get started
+          </p>
+        </div>
       </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="footer">
-      <p>Built with <span class="heart">❤️</span> using Google Gemini AI | Feedback welcome</p>
-    </footer>
-
-    <!-- Chatbot Toggle Button -->
-    <button class="chatbot-toggle" id="chatbot-toggle" title="AI Voice Assistant">
-      <i class="fas fa-comments"></i>
+    <!-- Banking Assistant Toggle Button -->
+    <button class="chatbot-toggle" id="chatbot-toggle" title="SBI Banking Assistant">
+      <i class="fas fa-headset"></i>
     </button>
 
     <!-- Chatbot Widget -->
     <div class="chatbot-widget" id="chatbot-widget">
       <div class="chatbot-header">
         <div class="chatbot-header-left">
-          <i class="fas fa-robot"></i>
+          <i class="fas fa-user-circle"></i>
           <div>
-            <h3>AI Assistant</h3>
+            <h3>SBI Digital Assistant</h3>
+            <p class="assistant-subtitle">How can I help you today?</p>
           </div>
         </div>
         <button class="chatbot-close" id="chatbot-close" title="Close">
