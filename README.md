@@ -2,7 +2,7 @@
 
 ![alt text](https://img.shields.io/badge/License-MIT-yellow.svg)
 
-This project demonstrates a real-time, voice-to-voice AI assistant using Google's AI models with Pipecat's WebSocket transport. It features a Python FastAPI backend and a TypeScript/Vite frontend.
+This project demonstrates a real-time, voice-to-voice AI assistant using Google's AI models with Pipecat's WebSocket transport. It features a Python FastAPI backend and a TypeScript/Vite frontend with a modern chatbot interface.
 
 The application captures audio from the user's microphone, streams it to the server for transcription, processes it with a LLM, generates a spoken response with text-to-speech, and streams the audio back to the client for playback—all in real time.
 
@@ -12,6 +12,15 @@ Two flows available:
 
 Learn about instant custom clone voice here - https://cloud.google.com/text-to-speech/docs/chirp3-instant-custom-voice
 
+**New Chatbot Interface**
+
+The application now features a professional, SBI-inspired design with a chatbot widget in the bottom-right corner. Users can:
+- Toggle the chatbot interface with a single click
+- Select between STT-LLM-TTS and Gemini Live workflows using radio buttons
+- Enter their Google API key securely
+- Connect and start voice conversations with visual feedback
+- Control the microphone with an intuitive button interface
+
 **Architecture**
 
 The client-side UI captures microphone audio and establishes a WebSocket connection with the Pipecat server. The server manages the real-time pipeline, integrating with third-party AI services for transcription, language modeling, and speech synthesis.
@@ -19,6 +28,8 @@ The client-side UI captures microphone audio and establishes a WebSocket connect
 ![alt text](./architecture.jpeg)
 
 Features
+- **Modern Chatbot Interface**: Professional SBI-inspired design with a floating chatbot widget
+- **Dual Workflow Selection**: Choose between STT-LLM-TTS or Gemini Live via radio buttons
 - Real-Time Transcription: Captures user audio and transcribes it live.
 - LLM Integration: Processes transcribed text with a configurable large language model.
 - Low-Latency Text-to-Speech (TTS): Generates and streams synthesized voice back to the client with minimal delay.
@@ -136,9 +147,24 @@ gcloud run deploy <your-service-name> \
   --set-env-vars="GOOGLE_CLOUD_PROJECT=<your-gcp-project>"
 ```
 
-How to run UI:
+## Using the Chatbot Interface
 
-![alt text](./bot_UI.jpeg)
+Once the application is running, you'll see a clean landing page with a chatbot button in the bottom-right corner.
+
+### Steps to use:
+1. **Open the Chatbot**: Click the blue chatbot icon in the bottom-right corner
+2. **Select Bot Type**: Choose between:
+   - **STT-LLM-TTS Pipeline**: Full pipeline with Speech-to-Text, LLM processing, and Text-to-Speech
+   - **Gemini Live API**: Direct integration with Gemini Live for real-time conversations
+3. **Enter API Key**: Provide your Google API key in the input field
+4. **Connect**: Click the "Connect" button to establish connection
+5. **Start Talking**: Click the green microphone button to start speaking
+6. **Stop**: Click the microphone again to mute
+
+The chatbot widget shows:
+- Connection status (red dot = disconnected, green dot = connected)
+- Real-time status messages
+- Microphone control with visual feedback
 
 Once deployed, Google Cloud will provide a public URL to access your application.
 
