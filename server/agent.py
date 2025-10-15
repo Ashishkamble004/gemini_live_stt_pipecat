@@ -56,7 +56,7 @@ async def run_agent(
 
     stt_location = "us-central1" if "chirp_2" in stt_model else "us"
     stt = GoogleSTTService(
-        vertexai_project="deep-clock-339817",
+        vertexai_project="general-ak",
         location=stt_location,
         params=GoogleSTTService.InputParams(
             languages=[Language(stt_language)],
@@ -67,7 +67,7 @@ async def run_agent(
 
     llm = GoogleLLMService(
         api_key=api_key,
-        vertexai_project="deep-clock-339817",
+        vertexai_project="general-ak",
         vertexai_location="us-central1",
         model=llm_model,
         system_instruction=system_instruction or SYSTEM_PROMPT
